@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>구정아 개인전 《우스모스》 탐방</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDK Modules -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+    // ==========================================
+    // [설정] Firebase 프로젝트의 Config 정보를 입력하세요.
+    // ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBED3jobrTHqLEq14y01zwqFY-sk-r5FM4",
+  authDomain: "woosmos.firebaseapp.com",
+  databaseURL: "https://woosmos-default-rtdb.firebaseio.com",
+  projectId: "woosmos",
+  storageBucket: "woosmos.firebasestorage.app",
+  messagingSenderId: "227082606586",
+  appId: "1:227082606586:web:7a927bdef6c39dee6e7643",
+  measurementId: "G-4G071DH1RT"
+};
+   
+
+    // Firebase 초기화
+    let db;
+    let isFirebaseReady = false;
+    try {
+      if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+        const app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        isFirebaseReady = true;
+      }
+    } catch (e) {
+      console.error("Firebase 초기화 에러:", e);
+    }
+
+    // 35개 작품 데이터베이스
+    const artworkData = [
+      { id: 1, name: "모비우스", nameEn: "Mobius", year: "2024", location: "M2 B1", desc: "전시장에 설치된 뫼비우스의 띠 형태 모듈 또는 조각" },
+      { id: 2, name: "Ousss", nameEn: "Ousss", year: "2024", location: "로비 및 복도", desc: "작가 특유의 Ousss 세계관을 대표하는 핵심 작품" },
+      { id: 3, name: "칠성", nameEn: "Seven Stars", year: "2024", location: "로비 및 복도", desc: "북두칠성과 별자리의 서사를 다룬 설치 작품" },
+      { id: 4, name: "무제", nameEn: "Untitled", year: "2024", location: "M2 1F", desc: "공간과 관람객의 경험을 여는 미니멀 스컬프처" },
+      { id: 5, name: "공중정원", nameEn: "Hanging Garden", year: "2024", location: "M2 1F", desc: "공중에 떠 있는 듯한 감각의 입체 드로잉/설치" },
+      { id: 6, name: "무제 (눈송이)", nameEn: "Untitled (Snowflake)", year: "2024", location: "M2 B1", desc: "눈송이 형태의 드로잉 혹은 미세한 미니어처" },
+      { id: 7, name: "미스테리움", nameEn: "Mysterium", year: "2024", location: "M2 B1", desc: "신비로운 분위기를 자아내는 감각적 공간 입체" },
+      { id: 8, name: "스케이트 파크", nameEn: "Skatepark", year: "2024", location: "M2 B1", desc: "야광 물질로 뒤덮인 스케이트보드 보울 구조물" },
+      { id: 9, name: "핑크 야광", nameEn: "Pink Glow", year: "2024", location: "M2 B1", desc: "어둠 속에서 발광하는 핑크색 안료 설치" },
+      { id: 10, name: "향기 조각 - Ousss", nameEn: "Scent Sculpture - Ousss", year: "2024", location: "M2 B1", desc: "보이지 않는 향기로 공간을 채우는 감각 조각" },
+      { id: 11, name: "향기 조각 - 보이드", nameEn: "Scent Sculpture - Void", year: "2024", location: "야외 및 기타 공간", desc: "외부 공기와 섞이는 냄새/향의 무형 조각" },
+      { id: 12, name: "향기 조각 - 수평", nameEn: "Scent Sculpture - Horizontal", year: "2024", location: "야외 및 기타 공간", desc: "공간 전체에 평평하게 퍼져나가는 향기 설치" },
+      { id: 13, name: "무제 (고미술 융합)", nameEn: "Untitled (Ancient Art)", year: "2024", location: "M1 고미술관", desc: "전통 유물과 현대 미술의 공간적 대화" },
+      { id: 14, name: "시공간의 궤적", nameEn: "Trajectory of Spacetime", year: "2024", location: "M1 고미술관", desc: "과거와 현재를 연결하는 동선 상의 빛과 선" },
+      { id: 15, name: "음파 드로잉", nameEn: "Soundwave Drawing", year: "2024", location: "M2 B1", desc: "소리와 파동의 형태를 미니멀하게 표현한 작품" },
+      { id: 16, name: "무제 (자기장)", nameEn: "Untitled (Magnetic Field)", year: "2024", location: "M2 B1", desc: "자기력선 형태의 설치물 및 나침반 이끌림" },
+      { id: 17, name: "바람의 기억", nameEn: "Memory of Wind", year: "2024", location: "야외 및 기타 공간", desc: "야외 테라스에 설치되어 기류를 포착하는 작품" },
+      { id: 18, name: "무제 (큐브)", nameEn: "Untitled (Cube)", year: "2024", location: "M2 1F", desc: "투명하고 정교한 기하학적 육면체 구조" },
+      { id: 19, name: "평행 우주", nameEn: "Parallel Universe", year: "2024", location: "M2 1F", desc: "거울과 반사를 통한 다차원 시각 효과" },
+      { id: 20, name: "무제 (선)", nameEn: "Untitled (Line)", year: "2024", location: "M2 1F", desc: "공간을 가로지르는 얇고 가벼운 선형 조각" },
+      { id: 21, name: "태양의 동선", nameEn: "Sun Path", year: "2024", location: "야외 및 기타 공간", desc: "자연광과 창을 활용한 야외-실내 연결 설치" },
+      { id: 22, name: "무제 (어둠)", nameEn: "Untitled (Darkness)", year: "2024", location: "M2 B1", desc: "암전된 방에서 경험하는 발광 수지 작업" },
+      { id: 23, name: "무제 (벽면 드로잉)", nameEn: "Untitled (Wall Drawing)", year: "2024", location: "로비 및 복도", desc: "복도 벽면에 연필과 미세 안료로 작업한 드로잉" },
+      { id: 24, name: "우스모스 맵", nameEn: "Ousssmap", year: "2024", location: "M2 1F", desc: "전시 전체의 기호와 궤적을 모아둔 드로잉 맵" },
+      { id: 25, name: "공중 구체", nameEn: "Floating Sphere", year: "2024", location: "M2 1F", desc: "공중에 미세하게 매달린 구형 개체" },
+      { id: 26, name: "무제 (소리)", nameEn: "Untitled (Sound)", year: "2024", location: "M2 1F", desc: "잔잔하게 들리는 초저주파 사운드 설치" },
+      { id: 27, name: "무제 (공간)", nameEn: "Untitled (Space)", year: "2024", location: "M2 B1", desc: "공간의 모서리를 재해석한 입체 설치" },
+      { id: 28, name: "무제 (빛)", nameEn: "Untitled (Light)", year: "2024", location: "M2 B1", desc: "특정 각도에서만 투사되는 섬세한 광원 작업" },
+      { id: 29, name: "무제 (점)", nameEn: "Untitled (Dot)", year: "2024", location: "M2 B1", desc: "바닥 부근에 극도로 작게 배치된 오브제" },
+      { id: 30, name: "무제 (무한)", nameEn: "Untitled (Infinity)", year: "2024", location: "M2 B1", desc: "반복적 형태가 자아내는 무한의 감각" },
+      { id: 31, name: "무제 (야외 설치)", nameEn: "Untitled (Outdoor)", year: "2024", location: "야외 및 기타 공간", desc: "미술관 야외 정원 잔디밭에 자리한 대형/소형 조각" },
+      { id: 32, name: "무제 (기억)", nameEn: "Untitled (Memory)", year: "2024", location: "M2 1F", desc: "개인적 기억을 기호화한 유기적 형태" },
+      { id: 33, name: "무제 (시간)", nameEn: "Untitled (Time)", year: "2024", location: "M2 1F", desc: "시간의 흐름에 따른 변형 가능성을 담은 조각" },
+      { id: 34, name: "무제 (공기)", nameEn: "Untitled (Air)", year: "2024", location: "야외 및 기타 공간", desc: "바람과 공기 흐름에 미세하게 반응하는 모빌형 설치" },
+      { id: 35, name: "우스모스 에필로그", nameEn: "Ousss Epilogue", year: "2024", location: "야외 및 기타 공간", desc: "전시의 여운을 마감하는 야외 동선 상의 최종 작품" }
+    ];
+
+    // 앱 상태 관리
+    let checkedMap = {}; // { 1: true, 2: false, ... }
+    let currentFilter = 'remaining'; // 'all', 'remaining', 'found'
+    let selectedLocation = 'ALL';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+    });
+
+    function initApp() {
+      renderLocationTabs();
+      setupEventListeners();
+
+      if (isFirebaseReady) {
+        // Firebase 실시간 리스너 연결
+        const statusRef = ref(db, 'ousss_artworks');
+        onValue(statusRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            checkedMap = data;
+          } else {
+            checkedMap = {};
+          }
+          updateUI();
+          document.getElementById('sync-status').textContent = "실시간 연결됨";
+          document.getElementById('sync-status').className = "text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200";
+        });
+      } else {
+        // Firebase 설정 전 로컬 테스트용
+        document.getElementById('sync-status').textContent = "로컬 모드 (Firebase 미설정)";
+        document.getElementById('sync-status').className = "text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200";
+        updateUI();
+      }
+    }
+
+    // 작품 체크/해제 처리
+    window.toggleCheck = function(id, e) {
+      e.stopPropagation();
+      const nextState = !checkedMap[id];
+      checkedMap[id] = nextState;
+
+      if (isFirebaseReady) {
+        set(ref(db, `ousss_artworks/${id}`), nextState);
+      } else {
+        updateUI();
+      }
+    };
+
+    // UI 업데이트
+    function updateUI() {
+      const total = artworkData.length;
+      let foundCount = 0;
+      artworkData.forEach(item => {
+        if (checkedMap[item.id]) foundCount++;
+      });
+      const remainingCount = total - foundCount;
+      const progressPercent = Math.round((foundCount / total) * 100);
+
+      // 상단 통계 업데이트
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-found').textContent = foundCount;
+      document.getElementById('stat-remaining').textContent = remainingCount;
+      document.getElementById('stat-percent').textContent = `${progressPercent}%`;
+      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+      // 위치별 탭 남은 작품 수 업데이트
+      renderLocationTabs();
+
+      // 작품 목록 필터링 및 리스트 생성
+      const listContainer = document.getElementById('artwork-list');
+      listContainer.innerHTML = '';
+
+      const filtered = artworkData.filter(item => {
+        const isFound = !!checkedMap[item.id];
+        
+        // 1. 보기 모드 필터
+        if (currentFilter === 'remaining' && isFound) return false;
+        if (currentFilter === 'found' && !isFound) return false;
+
+        // 2. 위치 필터
+        if (selectedLocation !== 'ALL' && item.location !== selectedLocation) return false;
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
+            <p class="text-sm font-medium">해당하는 작품이 없습니다.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const isFound = !!checkedMap[item.id];
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl border transition-all duration-200 bg-white ${
+          isFound ? 'border-slate-200 opacity-60 bg-slate-50' : 'border-slate-200 shadow-sm hover:border-slate-300'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0" onclick="openModal(${item.id})">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-bold text-slate-400">NO.${String(item.id).padStart(2, '0')}</span>
+                <span class="text-xs px-2 py-0.5 rounded-md font-medium bg-slate-100 text-slate-600">${item.location}</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 truncate ${isFound ? 'line-through text-slate-400' : ''}">
+                ${item.name}
+              </h3>
+              <p class="text-xs text-slate-400 font-sans italic">${item.nameEn} (${item.year})</p>
+            </div>
+            <button 
+              onclick="toggleCheck(${item.id}, event)"
+              class="shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 active:scale-95 ${
+                isFound 
+                  ? 'bg-slate-200 text-slate-700 hover:bg-slate-300' 
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm shadow-indigo-200'
+              }"
+            >
+              ${isFound ? '찾음 취소 ↩' : '찾았어요 ✓'}
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    // 위치 탭 렌더링
+    function renderLocationTabs() {
+      const locations = [
+        'ALL',
+        'M2 B1',
+        'M2 1F',
+        '로비 및 복도',
+        'M1 고미술관',
+        '야외 및 기타 공간'
+      ];
+
+      const container = document.getElementById('location-tabs');
+      container.innerHTML = '';
+
+      locations.forEach(loc => {
+        let count = 0;
+        if (loc === 'ALL') {
+          count = artworkData.filter(i => !checkedMap[i.id]).length;
+        } else {
+          count = artworkData.filter(i => i.location === loc && !checkedMap[i.id]).length;
+        }
+
+        const btn = document.createElement('button');
+        const isSelected = selectedLocation === loc;
+        btn.className = `shrink-0 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+          isSelected 
+            ? 'bg-slate-900 text-white' 
+            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+        }`;
+        btn.innerHTML = `${loc === 'ALL' ? '전체 위치' : loc} <span class="${isSelected ? 'text-slate-300' : 'text-indigo-600'}">(${count})</span>`;
+        btn.onclick = () => {
+          selectedLocation = loc;
+          updateUI();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    // 이벤트 리스너 설정
+    function setupEventListeners() {
+      // 보기 모드 필터 버튼
+      const filterBtns = document.querySelectorAll('[data-filter]');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          filterBtns.forEach(b => {
+            b.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+            b.classList.add('text-slate-500');
+          });
+          e.target.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+          e.target.classList.remove('text-slate-500');
+
+          currentFilter = e.target.getAttribute('data-filter');
+          updateUI();
+        });
+      });
+    }
+
+    // 작품 모달 팝업
+    window.openModal = function(id) {
+      const item = artworkData.find(a => a.id === id);
+      if (!item) return;
+
+      document.getElementById('modal-title').textContent = `${item.name} (${item.nameEn})`;
+      document.getElementById('modal-meta').textContent = `${item.location} · ${item.year}년`;
+      document.getElementById('modal-desc').textContent = item.desc;
+      document.getElementById('modal-check-btn').onclick = (e) => {
+        toggleCheck(id, e);
+        closeModal();
+      };
+      document.getElementById('modal-check-btn').textContent = checkedMap[id] ? '찾음 취소 ↩' : '찾았어요 ✓';
+
+      document.getElementById('modal').classList.remove('hidden');
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modal').classList.add('hidden');
+    };
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased selection:bg-indigo-100 min-h-screen pb-12">
+
+  <!-- 상단 앱바 -->
+  <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-3">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div>
+        <span class="text-[10px] font-bold tracking-widest uppercase text-indigo-600">OUSSS EXHIBITION</span>
+        <h1 class="text-lg font-black text-slate-900 tracking-tight">구정아 개인전 《우스모스》</h1>
+      </div>
+      <span id="sync-status" class="text-xs font-medium text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border">연결 확인 중...</span>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto px-4 pt-4 space-y-4">
+
+    <!-- 진행 상황 카드 -->
+    <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-xs font-bold text-slate-500">공동 탐방 (5명)</span>
+        </div>
+        <span id="stat-percent" class="text-2xl font-black text-indigo-600">0%</span>
+      </div>
+
+      <!-- 프로그레스 바 -->
+      <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden p-0.5 border border-slate-200">
+        <div id="progress-bar" class="bg-indigo-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+
+      <!-- 카운터 통계 -->
+      <div class="grid grid-cols-3 gap-2 pt-1 text-center border-t border-slate-100">
+        <div class="py-1">
+          <p class="text-[11px] font-medium text-slate-400">전체 작품</p>
+          <p id="stat-total" class="text-base font-bold text-slate-800">35</p>
+        </div>
+        <div class="py-1 border-x border-slate-100">
+          <p class="text-[11px] font-medium text-emerald-600">찾은 작품</p>
+          <p id="stat-found" class="text-base font-bold text-emerald-600">0</p>
+        </div>
+        <div class="py-1">
+          <p class="text-[11px] font-medium text-indigo-600">남은 작품</p>
+          <p id="stat-remaining" class="text-base font-bold text-indigo-600">35</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 필터 컨트롤 -->
+    <section class="space-y-3">
+      <!-- 1. 보기 스위처 -->
+      <div class="bg-slate-200 p-1 rounded-xl flex text-xs font-bold">
+        <button data-filter="remaining" class="flex-1 py-2 rounded-lg bg-white text-slate-900 shadow-sm transition-all">남은 작품만 보기</button>
+        <button data-filter="all" class="flex-1 py-2 rounded-lg text-slate-500 transition-all">전체 보기</button>
+        <button data-filter="found" class="flex-1 py-2 rounded-lg text-slate-500 transition-all">찾은 작품 다시보기</button>
+      </div>
+
+      <!-- 2. 위치별 가로 스크롤 탭 -->
+      <div id="location-tabs" class="flex gap-2 overflow-x-auto no-scrollbar py-1">
+        <!-- JS 생성 -->
+      </div>
+    </section>
+
+    <!-- 작품 목록 -->
+    <section id="artwork-list" class="space-y-2.5">
+      <!-- JS 생성 -->
+    </section>
+
+  </main>
+
+  <!-- 상세 정보 모달 팝업 -->
+  <div id="modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 border border-slate-100 shadow-2xl">
+      <div>
+        <span id="modal-meta" class="text-xs font-bold text-indigo-600">위치정보</span>
+        <h2 id="modal-title" class="text-xl font-bold text-slate-900 mt-0.5">작품명</h2>
+      </div>
+      <p id="modal-desc" class="text-sm text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+        작품 상세 정보 설명
+      </p>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeModal()" class="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">닫기</button>
+        <button id="modal-check-btn" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl text-xs">찾았어요 ✓</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
