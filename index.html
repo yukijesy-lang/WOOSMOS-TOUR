@@ -14,17 +14,15 @@
     // ==========================================
     // [설정] Firebase 프로젝트의 Config 정보를 입력하세요.
     // ==========================================
-const firebaseConfig = {
-  apiKey: "AIzaSyBED3jobrTHqLEq14y01zwqFY-sk-r5FM4",
-  authDomain: "woosmos.firebaseapp.com",
-  databaseURL: "https://woosmos-default-rtdb.firebaseio.com",
-  projectId: "woosmos",
-  storageBucket: "woosmos.firebasestorage.app",
-  messagingSenderId: "227082606586",
-  appId: "1:227082606586:web:7a927bdef6c39dee6e7643",
-  measurementId: "G-4G071DH1RT"
+   const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "woosmos-xxxxx.firebaseapp.com",
+  databaseURL: "https://woosmos-xxxxx-default-rtdb.firebaseio.com",
+  projectId: "woosmos-xxxxx",
+  storageBucket: "woosmos-xxxxx.appspot.com",
+  messagingSenderId: "123456789...",
+  appId: "1:123456789...:web:abcdef..."
 };
-   
 
     // Firebase 초기화
     let db;
@@ -40,42 +38,42 @@ const firebaseConfig = {
     }
 
     // 35개 작품 데이터베이스
-    const artworkData = [
-      { id: 1, name: "모비우스", nameEn: "Mobius", year: "2024", location: "M2 B1", desc: "전시장에 설치된 뫼비우스의 띠 형태 모듈 또는 조각" },
-      { id: 2, name: "Ousss", nameEn: "Ousss", year: "2024", location: "로비 및 복도", desc: "작가 특유의 Ousss 세계관을 대표하는 핵심 작품" },
-      { id: 3, name: "칠성", nameEn: "Seven Stars", year: "2024", location: "로비 및 복도", desc: "북두칠성과 별자리의 서사를 다룬 설치 작품" },
-      { id: 4, name: "무제", nameEn: "Untitled", year: "2024", location: "M2 1F", desc: "공간과 관람객의 경험을 여는 미니멀 스컬프처" },
-      { id: 5, name: "공중정원", nameEn: "Hanging Garden", year: "2024", location: "M2 1F", desc: "공중에 떠 있는 듯한 감각의 입체 드로잉/설치" },
-      { id: 6, name: "무제 (눈송이)", nameEn: "Untitled (Snowflake)", year: "2024", location: "M2 B1", desc: "눈송이 형태의 드로잉 혹은 미세한 미니어처" },
-      { id: 7, name: "미스테리움", nameEn: "Mysterium", year: "2024", location: "M2 B1", desc: "신비로운 분위기를 자아내는 감각적 공간 입체" },
-      { id: 8, name: "스케이트 파크", nameEn: "Skatepark", year: "2024", location: "M2 B1", desc: "야광 물질로 뒤덮인 스케이트보드 보울 구조물" },
-      { id: 9, name: "핑크 야광", nameEn: "Pink Glow", year: "2024", location: "M2 B1", desc: "어둠 속에서 발광하는 핑크색 안료 설치" },
-      { id: 10, name: "향기 조각 - Ousss", nameEn: "Scent Sculpture - Ousss", year: "2024", location: "M2 B1", desc: "보이지 않는 향기로 공간을 채우는 감각 조각" },
-      { id: 11, name: "향기 조각 - 보이드", nameEn: "Scent Sculpture - Void", year: "2024", location: "야외 및 기타 공간", desc: "외부 공기와 섞이는 냄새/향의 무형 조각" },
-      { id: 12, name: "향기 조각 - 수평", nameEn: "Scent Sculpture - Horizontal", year: "2024", location: "야외 및 기타 공간", desc: "공간 전체에 평평하게 퍼져나가는 향기 설치" },
-      { id: 13, name: "무제 (고미술 융합)", nameEn: "Untitled (Ancient Art)", year: "2024", location: "M1 고미술관", desc: "전통 유물과 현대 미술의 공간적 대화" },
-      { id: 14, name: "시공간의 궤적", nameEn: "Trajectory of Spacetime", year: "2024", location: "M1 고미술관", desc: "과거와 현재를 연결하는 동선 상의 빛과 선" },
-      { id: 15, name: "음파 드로잉", nameEn: "Soundwave Drawing", year: "2024", location: "M2 B1", desc: "소리와 파동의 형태를 미니멀하게 표현한 작품" },
-      { id: 16, name: "무제 (자기장)", nameEn: "Untitled (Magnetic Field)", year: "2024", location: "M2 B1", desc: "자기력선 형태의 설치물 및 나침반 이끌림" },
-      { id: 17, name: "바람의 기억", nameEn: "Memory of Wind", year: "2024", location: "야외 및 기타 공간", desc: "야외 테라스에 설치되어 기류를 포착하는 작품" },
-      { id: 18, name: "무제 (큐브)", nameEn: "Untitled (Cube)", year: "2024", location: "M2 1F", desc: "투명하고 정교한 기하학적 육면체 구조" },
-      { id: 19, name: "평행 우주", nameEn: "Parallel Universe", year: "2024", location: "M2 1F", desc: "거울과 반사를 통한 다차원 시각 효과" },
-      { id: 20, name: "무제 (선)", nameEn: "Untitled (Line)", year: "2024", location: "M2 1F", desc: "공간을 가로지르는 얇고 가벼운 선형 조각" },
-      { id: 21, name: "태양의 동선", nameEn: "Sun Path", year: "2024", location: "야외 및 기타 공간", desc: "자연광과 창을 활용한 야외-실내 연결 설치" },
-      { id: 22, name: "무제 (어둠)", nameEn: "Untitled (Darkness)", year: "2024", location: "M2 B1", desc: "암전된 방에서 경험하는 발광 수지 작업" },
-      { id: 23, name: "무제 (벽면 드로잉)", nameEn: "Untitled (Wall Drawing)", year: "2024", location: "로비 및 복도", desc: "복도 벽면에 연필과 미세 안료로 작업한 드로잉" },
-      { id: 24, name: "우스모스 맵", nameEn: "Ousssmap", year: "2024", location: "M2 1F", desc: "전시 전체의 기호와 궤적을 모아둔 드로잉 맵" },
-      { id: 25, name: "공중 구체", nameEn: "Floating Sphere", year: "2024", location: "M2 1F", desc: "공중에 미세하게 매달린 구형 개체" },
-      { id: 26, name: "무제 (소리)", nameEn: "Untitled (Sound)", year: "2024", location: "M2 1F", desc: "잔잔하게 들리는 초저주파 사운드 설치" },
-      { id: 27, name: "무제 (공간)", nameEn: "Untitled (Space)", year: "2024", location: "M2 B1", desc: "공간의 모서리를 재해석한 입체 설치" },
-      { id: 28, name: "무제 (빛)", nameEn: "Untitled (Light)", year: "2024", location: "M2 B1", desc: "특정 각도에서만 투사되는 섬세한 광원 작업" },
-      { id: 29, name: "무제 (점)", nameEn: "Untitled (Dot)", year: "2024", location: "M2 B1", desc: "바닥 부근에 극도로 작게 배치된 오브제" },
-      { id: 30, name: "무제 (무한)", nameEn: "Untitled (Infinity)", year: "2024", location: "M2 B1", desc: "반복적 형태가 자아내는 무한의 감각" },
-      { id: 31, name: "무제 (야외 설치)", nameEn: "Untitled (Outdoor)", year: "2024", location: "야외 및 기타 공간", desc: "미술관 야외 정원 잔디밭에 자리한 대형/소형 조각" },
-      { id: 32, name: "무제 (기억)", nameEn: "Untitled (Memory)", year: "2024", location: "M2 1F", desc: "개인적 기억을 기호화한 유기적 형태" },
-      { id: 33, name: "무제 (시간)", nameEn: "Untitled (Time)", year: "2024", location: "M2 1F", desc: "시간의 흐름에 따른 변형 가능성을 담은 조각" },
-      { id: 34, name: "무제 (공기)", nameEn: "Untitled (Air)", year: "2024", location: "야외 및 기타 공간", desc: "바람과 공기 흐름에 미세하게 반응하는 모빌형 설치" },
-      { id: 35, name: "우스모스 에필로그", nameEn: "Ousss Epilogue", year: "2024", location: "야외 및 기타 공간", desc: "전시의 여운을 마감하는 야외 동선 상의 최종 작품" }
+  const rawArtworks = [
+      { id: 1, title: "모비우스 (MOBIOUSSS)", year: "미상", location: "M2 B1", feature: "6톤 스테인리스스틸 뫼비우스 조각" },
+      { id: 2, title: "그라비타 (GRAVITTA)", year: "미상", location: "로비 & 복도", feature: "로비 - 인광 스케이트 파크 대형 설치" },
+      { id: 3, title: "테라 인코그니타 (Terra Incognita)", year: "미상", location: "로비 & 복도", feature: "로비 - 영상 매체" },
+      { id: 4, title: "R", year: "미상", location: "M2 1F", feature: "1,001점 드로잉 및 77개 나무 상자" },
+      { id: 5, title: "나 & 당신 (Me & You)", year: "미상", location: "M2 1F", feature: "바닥 체험형 패턴" },
+      { id: 6, title: "마그넷 시티즈 A (Magnet Cities A)", year: "미상", location: "M2 B1", feature: "페라이트 자석 벽면 연작" },
+      { id: 7, title: "마그넷 시티즈 B (Magnet Cities B)", year: "미상", location: "M2 B1", feature: "자석 구조 및 철가루 설치" },
+      { id: 8, title: "강세 S (KANGSE S)", year: "미상", location: "M2 B1", feature: "캐릭터 형상 유선형 조각" },
+      { id: 9, title: "에버 (EVER)", year: "미상", location: "M2 B1", feature: "청동 조각" },
+      { id: 10, title: "바스트 (VAST)", year: "미상", location: "M2 B1", feature: "청동 조각 연작" },
+      { id: 11, title: "덴시티, GITD (Density, GITD)", year: "미상", location: "M1 고미술관", feature: "백자 사이 부양 인광 암석" },
+      { id: 12, title: "Dearest MoMo", year: "미상", location: "M1 고미술관", feature: "유물 진열장 부근 초미니 조각" },
+      { id: 13, title: "세븐 스타즈 (5Seven Stars)", year: "미상", location: "M2 B1", feature: "야광 및 빛 평면 연작" },
+      { id: 14, title: "세븐 스타즈 (7Seven Stars)", year: "미상", location: "M2 B1", feature: "야광 및 빛 평면 연작" },
+      { id: 15, title: "VNTITLED (Pencil Leads 57)", year: "미상", location: "M2 B1", feature: "M2 B1 벽면 틈새 - 연필심 쌓기 극소 조각" },
+      { id: 16, title: "오도라마 시티 베니스–SOS", year: "미상", location: "M2 1F", feature: "참나무 조각 벤치" },
+      { id: 17, title: "앰비그램 (Ambigram)", year: "미상", location: "M2 1F", feature: "뫼비우스 변주 나무 벤치" },
+      { id: 18, title: "애피리오딕 (Aperiodic)", year: "미상", location: "M2 1F", feature: "가구형 나무 조각" },
+      { id: 19, title: "FMMA (후각 작품)", year: "미상", location: "기타/전시장 전체", feature: "전시장 전체 - 조향 향기" },
+      { id: 20, title: "테라 I (Terra I)", year: "미상", location: "M2 B1", feature: "사운드 인스톨레이션" },
+      { id: 21, title: "테라 II (Terra II)", year: "미상", location: "로비 & 복도", feature: "로비 & 복도 - 음향 연작" },
+      { id: 22, title: "USSMIC 11", year: "미상", location: "기타/전시장 전체", feature: "작은 사진 -11장" },
+      { id: 23, title: "우스 라인 드로잉 1 (OUSSS Drawing I)", year: "미상", location: "M2 1F", feature: "벽면 틈새 드로잉" },
+      { id: 24, title: "우스 라인 드로잉 2 (OUSSS Drawing II)", year: "미상", location: "M2 1F", feature: "벽면 틈새 드로잉" },
+      { id: 25, title: "무제 (인광 소형 조각 1)", year: "미상", location: "M2 B1", feature: "어두운 구석 야광 조각" },
+      { id: 26, title: "무제 (인광 소형 조각 2)", year: "미상", location: "M2 B1", feature: "어두운 구석 야광 조각" },
+      { id: 27, title: "무제 (인광 소형 조각 3)", year: "미상", location: "M2 B1", feature: "어두운 구석 야광 조각" },
+      { id: 28, title: "평행 세계 (Parallel Worlds)", year: "미상", location: "기타/전시장 전체", feature: "M2 계단실 - 미시적 조각" },
+      { id: 29, title: "LAVA X", year: "미상", location: "M2 B1", feature: "M2 B1 설치 작품" },
+      { id: 30, title: "FLOATING OUSES", year: "미상", location: "M2 1F", feature: "M2 1F 설치 작품" },
+      { id: 31, title: "SANGBONG", year: "미상", location: "M2 1F", feature: "M2 1F 설치 작품" },
+      { id: 32, title: "기인", year: "미상", location: "M2 1F", feature: "M2 1F 설치 작품" },
+      { id: 33, title: "ARV&EA (Reality Upgrade &End alone) - M1", year: "미상", location: "M1 고미술관", feature: "ARV&EA M1 고미술관 설치" },
+      { id: 34, title: "ARV&EA (Reality Upgrade &End alone) - 1F", year: "미상", location: "M2 1F", feature: "ARV&EA M2 1F 설치" },
+      { id: 35, title: "ARV&EA (Reality Upgrade &End alone) - B1", year: "미상", location: "M2 B1", feature: "ARV&EA M2 B1 설치" }
     ];
 
     // 앱 상태 관리
